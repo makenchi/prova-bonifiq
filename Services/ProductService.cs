@@ -5,7 +5,7 @@ namespace ProvaPub.Services
 {
 	public class ProductService
 	{
-		TestDbContext _ctx;
+		private readonly TestDbContext _ctx;
 
 		public ProductService(TestDbContext ctx)
 		{
