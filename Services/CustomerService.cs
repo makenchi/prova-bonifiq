@@ -6,16 +6,16 @@ namespace ProvaPub.Services
 {
     public class CustomerService
     {
-        private readonly BaseRepository<Customer> _ctx;
+        private readonly TestDbContext _ctx;
 
-        public CustomerService(BaseRepository<Customer> customerRepository)
+        public CustomerService(TestDbContext customerRepository)
         {
             _ctx = customerRepository;
         }
 
         public CustomerList ListCustomers(int page)
         {            
-            return new CustomerList() { HasNext = false, TotalCount = 10, Customers = _ctx.GetAll() };
+            return new CustomerList() { HasNext = false, TotalCount = 10, Customers = _ctx.Customers.ToList() };
         }
 
         public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
@@ -25,7 +25,7 @@ namespace ProvaPub.Services
             if (purchaseValue <= 0) throw new ArgumentOutOfRangeException(nameof(purchaseValue));
 
             //Business Rule: Non registered Customers cannot purchase
-            var customer = await _ctx.FindAsync(customerId);
+            var customer = await _ctx.Customers.FindAsync(customerId);
             if (customer == null) throw new InvalidOperationException($"Customer Id {customerId} does not exists");
 
             //Business Rule: A customer can purchase only a single time per month
