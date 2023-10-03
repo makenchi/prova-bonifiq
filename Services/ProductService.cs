@@ -24,6 +24,7 @@ namespace ProvaPub.Services
 			if (page < totalPages) { 
 				hasNext = true;
 			}
+
 			return new ProductList() {  HasNext=hasNext, TotalCount =products.TotalItens, Products = products.ItemList };
 		}
 

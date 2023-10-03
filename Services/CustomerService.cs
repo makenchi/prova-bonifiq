@@ -7,15 +7,26 @@ namespace ProvaPub.Services
     public class CustomerService
     {
         private readonly TestDbContext _ctx;
+        private readonly BaseRepository<Customer> _repository;
 
         public CustomerService(TestDbContext customerRepository)
         {
             _ctx = customerRepository;
+            _repository = new BaseRepository<Customer>(_ctx);
         }
 
         public CustomerList ListCustomers(int page)
-        {            
-            return new CustomerList() { HasNext = false, TotalCount = 10, Customers = _ctx.Customers.ToList() };
+        {          
+            int limit = 10;
+            var customers = _repository.GetPaginated(page, limit);
+            var totalPages = customers.TotalItens / customers.ItensPerPage;
+            bool hasNext = false;
+            if (page < totalPages)
+            {
+                hasNext = true;
+            }
+
+            return new CustomerList() { HasNext = hasNext, TotalCount = customers.TotalItens, Customers = customers.ItemList };
         }
 
         public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
